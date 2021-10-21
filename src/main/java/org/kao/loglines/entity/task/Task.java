@@ -1,9 +1,10 @@
-package org.kao.loglines.entity;
+package org.kao.loglines.entity.task;
 
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.kao.loglines.configuration.SizeType;
+import org.kao.loglines.entity.EntityId;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

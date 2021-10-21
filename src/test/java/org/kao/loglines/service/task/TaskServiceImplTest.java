@@ -1,15 +1,12 @@
 package org.kao.loglines.service.task;
 
 import lombok.extern.slf4j.Slf4j;
-import org.assertj.core.internal.bytebuddy.utility.RandomString;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.kao.loglines.data.TestDataProvider;
-import org.kao.loglines.configuration.SizeType;
-import org.kao.loglines.entity.Task;
+import org.kao.loglines.entity.task.Task;
 import org.kao.loglines.exception.GenericServiceException;
-import org.kao.loglines.service.task.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 

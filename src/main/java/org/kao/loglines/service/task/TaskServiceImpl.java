@@ -1,7 +1,7 @@
 package org.kao.loglines.service.task;
 
 import lombok.RequiredArgsConstructor;
-import org.kao.loglines.entity.Task;
+import org.kao.loglines.entity.task.Task;
 import org.kao.loglines.exception.GenericServiceException;
 import org.kao.loglines.repository.TaskRepository;
 import org.springframework.stereotype.Service;
