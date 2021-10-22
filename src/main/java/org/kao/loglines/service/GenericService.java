@@ -2,15 +2,15 @@ package org.kao.loglines.service;
 
 import java.util.List;
 
-public interface GenericService<T> {
+public interface GenericService<Entity, DtoUpdate> {
 
-    T get(Long id);
+    Entity get(Long id);
 
-    List<T> getList();
+    List<Entity> getList();
 
-    T create(T entity);
+    Entity create(DtoUpdate dtoUpdate);
 
-    T update(Long id, T entity);
+    Entity update(Long id, DtoUpdate dtoUpdate);
 
     void deleteById(Long id);
 

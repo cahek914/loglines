@@ -8,8 +8,11 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface TaskMapper {
 
-    @Mapping(source = "title", target = "title")
-    @Mapping(source = "description", target = "description")
     TaskUpdateDto map(Task entity);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "createdDate", ignore = true)
+    @Mapping(target = "updatedDate", ignore = true)
+    Task map(TaskUpdateDto updateDto);
 
 }

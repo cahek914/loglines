@@ -1,20 +1,22 @@
 package org.kao.loglines.service.task;
 
 import lombok.RequiredArgsConstructor;
+import org.kao.loglines.dto.task.TaskUpdateDto;
 import org.kao.loglines.entity.task.Task;
 import org.kao.loglines.exception.GenericServiceException;
+import org.kao.loglines.mapper.task.TaskMapper;
 import org.kao.loglines.repository.TaskRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
 public class TaskServiceImpl implements TaskService {
 
     private final TaskRepository taskRepository;
+    private final TaskMapper mapper;
 
     @Override
     @Transactional(readOnly = true)
@@ -30,19 +32,17 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional
-    public Task create(Task task) {
-        return taskRepository.save(task);
+    public Task create(TaskUpdateDto updateDto) {
+        return taskRepository.save(mapper.map(updateDto));
     }
 
     @Override
     @Transactional
-    public Task update(Long id, Task task) {
-
+    public Task update(Long id, TaskUpdateDto updateDto) {
         Task taskDb = get(id);
-        if (Objects.nonNull(taskDb)) {
-            task.setId(id);
-        }
-        return taskRepository.save(task);
+        taskDb.setTitle(updateDto.getTitle());
+        taskDb.setDescription(updateDto.getDescription());
+        return taskRepository.save(taskDb);
     }
 
     @Override

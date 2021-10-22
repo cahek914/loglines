@@ -32,12 +32,13 @@ dependencies {
     runtimeOnly 'org.postgresql:postgresql:42.2.24.jre7'
     runtimeOnly 'com.h2database:h2:1.4.200'
 
+    // lombok annotationProcessor should run before mapstruct-processor
+    compileOnly 'org.projectlombok:lombok:1.18.22'
+    annotationProcessor 'org.projectlombok:lombok:1.18.22'
+
     // An annotation processor for generating type-safe bean mappers
     implementation 'org.mapstruct:mapstruct:1.4.2.Final'
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.4.2.Final'
-
-    compileOnly 'org.projectlombok:lombok:1.18.22'
-    annotationProcessor 'org.projectlombok:lombok:1.18.22'
 
     testCompileOnly 'org.projectlombok:lombok:1.18.22'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.22'

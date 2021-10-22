@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.kao.loglines.data.TestDataProvider;
 import org.kao.loglines.entity.task.Task;
 import org.kao.loglines.exception.GenericServiceException;
+import org.kao.loglines.mapper.task.TaskMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -27,6 +28,9 @@ class TaskServiceImplTest {
     @Autowired
     private TestDataProvider dataProvider;
 
+    @Autowired
+    private TaskMapper taskMapper;
+
     @BeforeEach
     void setUp() {
     }
@@ -46,7 +50,7 @@ class TaskServiceImplTest {
 
         List<Task> taskList = dataProvider.getRandomListOf(dataProvider::task, 0, 2, 10);
 
-        taskList.forEach(task -> log.debug(taskService.create(task).toString()));
+        taskList.forEach(task -> log.debug(taskService.create(taskMapper.map(task)).toString()));
 
         List<Task> taskListDb = taskService.getList();
         assertThat(taskList.size()).isEqualTo(taskListDb.size());
@@ -56,17 +60,17 @@ class TaskServiceImplTest {
     @Test
     public void taskLastUpdatedTimeShouldBeAfterThanPreviousUpdate() {
 
-        Task task = taskService.create(dataProvider.task(0));
+        Task task = taskService.create(taskMapper.map(dataProvider.task(0)));
         assertThat(task.getId()).isNotNull();
 
         String newTitle = "some new title";
         task.setTitle(newTitle);
-        Task taskDb = taskService.update(task.getId(), task);
+        Task taskDb = taskService.update(task.getId(), taskMapper.map(task));
 
         assertThat(taskDb).isNotEqualTo(task);
         assertThat(taskDb.getTitle()).isEqualTo(newTitle);
         assertThat(taskDb.getUpdatedDate()).isAfter(task.getUpdatedDate());
-        assertThat(taskDb.getCreatedDate()).isEqualTo(task.getCreatedDate());
+        assertThat(taskDb.getCreatedDate()).isEqualToIgnoringNanos(task.getCreatedDate());
 
     }
 
@@ -74,7 +78,7 @@ class TaskServiceImplTest {
     public void shouldThrownByValidationExceptionIfTaskTitleOrDescriptionIncreaseMaxSize() {
 
         Task task = dataProvider.task(1);
-        assertThatThrownBy(() -> taskService.create(task)).isInstanceOf(ValidationException.class);
+        assertThatThrownBy(() -> taskService.create(taskMapper.map(task))).isInstanceOf(ValidationException.class);
 
     }
 

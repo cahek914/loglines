@@ -9,29 +9,29 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
-public abstract class GenericCRUDController<T> {
+public abstract class GenericCRUDController<Entity, DtoUpdate> {
 
-    public abstract GenericService<T> getService();
+    public abstract GenericService<Entity, DtoUpdate> getService();
 
     @GetMapping
-    public ResponseEntity<List<T>> getAllData() {
+    public ResponseEntity<List<Entity>> getAllData() {
         return ResponseEntity.ok(getService().getList());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<T> getById(@PathVariable(name = "id") @NotNull Long id) {
+    public ResponseEntity<Entity> getById(@PathVariable(name = "id") @NotNull Long id) {
         return ResponseEntity.ok(getService().get(id));
     }
 
     @PostMapping
-    public ResponseEntity<T> save(@Valid @RequestBody T entity) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(getService().create(entity));
+    public ResponseEntity<Entity> save(@Valid @RequestBody DtoUpdate dtoUpdate) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(getService().create(dtoUpdate));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<T> update(@PathVariable(name = "id") @NotNull Long id,
-                                    @Valid @RequestBody T entity) {
-        return ResponseEntity.ok(getService().update(id, entity));
+    public ResponseEntity<Entity> update(@PathVariable(name = "id") @NotNull Long id,
+                                         @Valid @RequestBody DtoUpdate dtoUpdate) {
+        return ResponseEntity.ok(getService().update(id, dtoUpdate));
     }
 
     @DeleteMapping("/{id}")
