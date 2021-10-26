@@ -5,6 +5,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.kao.loglines.data.TestDataProvider;
+import org.kao.loglines.dto.task.TaskFullDto;
 import org.kao.loglines.entity.task.Task;
 import org.kao.loglines.exception.GenericServiceException;
 import org.kao.loglines.mapper.task.TaskMapper;
@@ -50,7 +51,7 @@ class TaskServiceImplTest {
 
         List<Task> taskList = dataProvider.getRandomListOf(dataProvider::task, 0, 2, 10);
 
-        taskList.forEach(task -> log.debug(taskService.create(taskMapper.map(task)).toString()));
+        taskList.forEach(task -> log.info(taskService.create(taskMapper.mapToDto(task)).toString()));
 
         List<Task> taskListDb = taskService.getList();
         assertThat(taskList.size()).isEqualTo(taskListDb.size());
@@ -60,12 +61,14 @@ class TaskServiceImplTest {
     @Test
     public void taskLastUpdatedTimeShouldBeAfterThanPreviousUpdate() {
 
-        Task task = taskService.create(taskMapper.map(dataProvider.task(0)));
+        Task task = taskService.create(taskMapper.mapToDto(dataProvider.task(0)));
+        TaskFullDto updateDto = taskMapper.mapToDto(task);
         assertThat(task.getId()).isNotNull();
+        assertThat(updateDto).isNotNull();
 
         String newTitle = "some new title";
-        task.setTitle(newTitle);
-        Task taskDb = taskService.update(task.getId(), taskMapper.map(task));
+        updateDto.setTitle(newTitle);
+        Task taskDb = taskService.update(task.getId(), updateDto);
 
         assertThat(taskDb).isNotEqualTo(task);
         assertThat(taskDb.getTitle()).isEqualTo(newTitle);
@@ -78,7 +81,7 @@ class TaskServiceImplTest {
     public void shouldThrownByValidationExceptionIfTaskTitleOrDescriptionIncreaseMaxSize() {
 
         Task task = dataProvider.task(1);
-        assertThatThrownBy(() -> taskService.create(taskMapper.map(task))).isInstanceOf(ValidationException.class);
+        assertThatThrownBy(() -> taskService.create(taskMapper.mapToDto(task))).isInstanceOf(ValidationException.class);
 
     }
 

@@ -2,10 +2,11 @@ package org.kao.loglines.mapper.task;
 
 import org.junit.jupiter.api.Test;
 import org.kao.loglines.data.TestDataProvider;
-import org.kao.loglines.dto.task.TaskUpdateDto;
 import org.kao.loglines.entity.task.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -19,13 +20,23 @@ class TaskMapperTest {
     private TaskMapper mapper;
 
     @Test
-    void mappingTaskToUpdateDto() {
+    void mappedIdsSizeShouldEqualsToEntitiesSize() {
 
-        Task task = dataProvider.taskFull(0);
-        TaskUpdateDto updateDto = mapper.map(task);
+        List<Task> taskList = dataProvider.getRandomListOf(dataProvider::task, 0, 2, 10);
+        List<Long> ids = mapper.mapEntitiesToIds(taskList);
 
-        assertThat(task.getTitle()).isEqualTo(updateDto.getTitle());
-        assertThat(task.getDescription()).isEqualTo(updateDto.getDescription());
+        assertThat(taskList.size()).isEqualTo(ids.size());
+
+    }
+
+    @Test
+    void mappingToUpdateDto() {
+
+//        Task task = dataProvider.taskFull(0);
+//        TaskUpdateDto updateDto = mapper.mapToDto(task);
+//
+//        assertThat(task.getTitle()).isEqualTo(updateDto.getTitle());
+//        assertThat(task.getDescription()).isEqualTo(updateDto.getDescription());
 
     }
 }

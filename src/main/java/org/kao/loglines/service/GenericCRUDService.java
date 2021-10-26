@@ -2,9 +2,11 @@ package org.kao.loglines.service;
 
 import java.util.List;
 
-public interface GenericService<Entity, DtoUpdate> {
+public interface GenericCRUDService<Entity, DtoUpdate> {
 
-    Entity get(Long id);
+    DtoUpdate get(Long id);
+
+    Entity getEntity(Long id);
 
     List<Entity> getList();
 

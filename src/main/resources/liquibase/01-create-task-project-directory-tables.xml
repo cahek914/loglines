@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.5.xsd">
+
+    <changeSet id="01-create-table-task" author="Aleksandr.Krivoruchko">
+
+        <createTable tableName="task">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_task"/>
+            </column>
+            <column name="title" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="VARCHAR(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_date" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="project_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+    </changeSet>
+
+    <changeSet id="01-create-table-project" author="Aleksandr.Krivoruchko">
+
+        <createTable tableName="project">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_project"/>
+            </column>
+            <column name="title" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="VARCHAR(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="start_date" type="DATETIME"/>
+            <column name="end_date" type="DATETIME"/>
+            <column name="parent_directory_id" type="BIGINT"/>
+        </createTable>
+
+    </changeSet>
+
+    <changeSet id="01-create-table-directory" author="Aleksandr.Krivoruchko">
+
+        <createTable tableName="directory">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_directory"/>
+            </column>
+            <column name="title" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="VARCHAR(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="parent_id" type="BIGINT"/>
+        </createTable>
+
+    </changeSet>
+
+    <changeSet id="01-add-foreign-key-constraint" author="Aleksandr.Krivoruchko">
+
+        <addForeignKeyConstraint baseColumnNames="project_id"
+                                 baseTableName="task"
+                                 constraintName="FK_TASK_ON_PROJECT"
+                                 referencedColumnNames="id"
+                                 referencedTableName="project"
+                                 onDelete="CASCADE"
+                                 onUpdate="NO ACTION"/>
+
+        <addForeignKeyConstraint baseColumnNames="parent_directory_id"
+                                 baseTableName="project"
+                                 constraintName="FK_PROJECT_ON_PARENT_DIRECTORY"
+                                 referencedColumnNames="id"
+                                 referencedTableName="directory"
+                                 onDelete="CASCADE"
+                                 onUpdate="NO ACTION"/>
+
+        <addForeignKeyConstraint baseColumnNames="parent_id"
+                                 baseTableName="directory"
+                                 constraintName="FK_DIRECTORY_ON_PARENT"
+                                 referencedColumnNames="id"
+                                 referencedTableName="directory"
+                                 onDelete="CASCADE"
+                                 onUpdate="NO ACTION"/>
+
+    </changeSet>
+
+</databaseChangeLog>

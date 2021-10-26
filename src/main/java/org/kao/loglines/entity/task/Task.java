@@ -3,14 +3,12 @@ package org.kao.loglines.entity.task;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.kao.loglines.configuration.SizeType;
 import org.kao.loglines.entity.EntityId;
+import org.kao.loglines.entity.TitleDescription;
+import org.kao.loglines.entity.project.Project;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 @Entity
@@ -20,7 +18,11 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class Task extends EntityId {
+public class Task extends TitleDescription implements EntityId {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
@@ -31,13 +33,9 @@ public class Task extends EntityId {
     private LocalDateTime updatedDate;
 
     @NotNull
-    @Size(max = SizeType.TASK_TITLE_MAX_SIZE)
-    @Column(nullable = false, length = SizeType.TASK_TITLE_MAX_SIZE)
-    private String title;
-
-    @NotNull
-    @Size(max = SizeType.TASK_DESCRIPTION_MAX_SIZE)
-    @Column(nullable = false, length = SizeType.TASK_DESCRIPTION_MAX_SIZE)
-    private String description;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "project_id", nullable = false)
+    @ToString.Exclude
+    private Project project;
 
 }

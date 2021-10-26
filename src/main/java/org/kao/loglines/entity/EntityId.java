@@ -1,24 +1,9 @@
 package org.kao.loglines.entity;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+public interface EntityId {
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
+    Long getId();
 
-@MappedSuperclass
-@Getter
-@Setter
-@EqualsAndHashCode
-@ToString
-public abstract class EntityId {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    void setId(Long id);
 
 }

@@ -1,6 +1,6 @@
 package org.kao.loglines.controller;
 
-import org.kao.loglines.service.GenericService;
+import org.kao.loglines.service.GenericCRUDService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,7 +11,7 @@ import java.util.List;
 
 public abstract class GenericCRUDController<Entity, DtoUpdate> {
 
-    public abstract GenericService<Entity, DtoUpdate> getService();
+    public abstract GenericCRUDService<Entity, DtoUpdate> getService();
 
     @GetMapping
     public ResponseEntity<List<Entity>> getAllData() {
@@ -19,7 +19,7 @@ public abstract class GenericCRUDController<Entity, DtoUpdate> {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Entity> getById(@PathVariable(name = "id") @NotNull Long id) {
+    public ResponseEntity<DtoUpdate> getById(@PathVariable(name = "id") @NotNull Long id) {
         return ResponseEntity.ok(getService().get(id));
     }
 
