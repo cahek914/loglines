@@ -2,6 +2,7 @@ package org.kao.loglines.service.project;
 
 import lombok.RequiredArgsConstructor;
 import org.kao.loglines.dto.project.ProjectFullDto;
+import org.kao.loglines.dto.project.ProjectUpdateDto;
 import org.kao.loglines.entity.project.Project;
 import org.kao.loglines.mapper.GenericMapper;
 import org.kao.loglines.mapper.project.ProjectMapper;
@@ -13,7 +14,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class ProjectServiceImpl extends GenericCRUDServiceImpl<Project, ProjectFullDto> implements ProjectService {
+public class ProjectServiceImpl extends GenericCRUDServiceImpl<Project, ProjectFullDto, ProjectUpdateDto> implements ProjectService {
 
     private final ProjectRepository repository;
 
@@ -26,7 +27,7 @@ public class ProjectServiceImpl extends GenericCRUDServiceImpl<Project, ProjectF
     }
 
     @Override
-    public GenericMapper<Project, ProjectFullDto> getMapper() {
+    public GenericMapper<Project, ProjectFullDto, ProjectUpdateDto> getMapper() {
         return mapper;
     }
 }

@@ -51,7 +51,7 @@ class TaskServiceImplTest {
 
         List<Task> taskList = dataProvider.getRandomListOf(dataProvider::task, 0, 2, 10);
 
-        taskList.forEach(task -> log.info(taskService.create(taskMapper.mapToDto(task)).toString()));
+        taskList.forEach(task -> log.info(taskService.create(taskMapper.mapEntityToFullDto(task)).toString()));
 
         List<Task> taskListDb = taskService.getList();
         assertThat(taskList.size()).isEqualTo(taskListDb.size());
@@ -61,8 +61,8 @@ class TaskServiceImplTest {
     @Test
     public void taskLastUpdatedTimeShouldBeAfterThanPreviousUpdate() {
 
-        Task task = taskService.create(taskMapper.mapToDto(dataProvider.task(0)));
-        TaskFullDto updateDto = taskMapper.mapToDto(task);
+        Task task = taskService.create(taskMapper.mapEntityToFullDto(dataProvider.task(0)));
+        TaskFullDto updateDto = taskMapper.mapEntityToFullDto(task);
         assertThat(task.getId()).isNotNull();
         assertThat(updateDto).isNotNull();
 
@@ -81,7 +81,7 @@ class TaskServiceImplTest {
     public void shouldThrownByValidationExceptionIfTaskTitleOrDescriptionIncreaseMaxSize() {
 
         Task task = dataProvider.task(1);
-        assertThatThrownBy(() -> taskService.create(taskMapper.mapToDto(task))).isInstanceOf(ValidationException.class);
+        assertThatThrownBy(() -> taskService.create(taskMapper.mapEntityToFullDto(task))).isInstanceOf(ValidationException.class);
 
     }
 

@@ -3,16 +3,13 @@ package org.kao.loglines.dto.directory;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.List;
+import org.kao.loglines.entity.TitleDescription;
 
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
-public class DirectoryFullDto extends DirectoryUpdateDto {
+public class DirectoryUpdateDto extends TitleDescription {
 
-    private Long id;
-
-    private List<Long> projectIds;
+    private Long parentDirectoryId;
 
 }

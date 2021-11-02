@@ -2,6 +2,7 @@ package org.kao.loglines.service.task;
 
 import lombok.RequiredArgsConstructor;
 import org.kao.loglines.dto.task.TaskFullDto;
+import org.kao.loglines.dto.task.TaskUpdateDto;
 import org.kao.loglines.entity.task.Task;
 import org.kao.loglines.mapper.GenericMapper;
 import org.kao.loglines.mapper.task.TaskMapper;
@@ -13,7 +14,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class TaskServiceImpl extends GenericCRUDServiceImpl<Task, TaskFullDto> implements TaskService {
+public class TaskServiceImpl extends GenericCRUDServiceImpl<Task, TaskFullDto, TaskUpdateDto> implements TaskService {
 
     private final TaskRepository repository;
 
@@ -26,7 +27,7 @@ public class TaskServiceImpl extends GenericCRUDServiceImpl<Task, TaskFullDto> i
     }
 
     @Override
-    public GenericMapper<Task, TaskFullDto> getMapper() {
+    public GenericMapper<Task, TaskFullDto, TaskUpdateDto> getMapper() {
         return mapper;
     }
 

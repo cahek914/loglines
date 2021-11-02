@@ -1,6 +1,7 @@
 package org.kao.loglines.mapper.project;
 
 import org.kao.loglines.dto.project.ProjectFullDto;
+import org.kao.loglines.dto.project.ProjectUpdateDto;
 import org.kao.loglines.entity.project.Project;
 import org.kao.loglines.mapper.GenericMapperImpl;
 import org.kao.loglines.mapper.directory.DirectoryMapper;
@@ -15,31 +16,41 @@ import org.mapstruct.MappingTarget;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Mapper(componentModel = "spring", uses = {TaskMapper.class, DirectoryMapper.class, DirectoryService.class, TaskService.class})
-public abstract class ProjectMapper extends GenericMapperImpl<Project, ProjectFullDto> {
+public abstract class ProjectMapper extends GenericMapperImpl<Project, ProjectFullDto, ProjectUpdateDto> {
 
     @Autowired
     private ProjectService projectService;
 
     @Override
-    public GenericCRUDService<Project, ProjectFullDto> getService() {
+    protected GenericCRUDService<Project, ProjectFullDto, ProjectUpdateDto> getService() {
         return projectService;
     }
 
     @Override
     @Mapping(source = "parentDirectory.id", target = "parentDirectoryId")
     @Mapping(source = "tasks", target = "taskIds")
-    public abstract ProjectFullDto mapToDto(Project project);
+    public abstract ProjectFullDto mapEntityToFullDto(Project project);
+
+    @Override
+    @Mapping(source = "id", target = "id")
+    @Mapping(source = "taskIds", target = "tasks")
+    @Mapping(source = "parentDirectoryId", target = "parentDirectory", qualifiedByName = "mapIdToEntity")
+    public abstract Project mapFullDtoToEntity(ProjectFullDto projectFullDto);
+
+    @Override
+    @Mapping(source = "parentDirectory.id", target = "parentDirectoryId")
+    public abstract ProjectUpdateDto mapEntityToUpdateDto(Project project);
 
     @Override
     @Mapping(target = "id", ignore = true)
-    @Mapping(source = "taskIds", target = "tasks", qualifiedByName = "mapIdsToEntities")
+    @Mapping(target = "tasks", ignore = true)
     @Mapping(source = "parentDirectoryId", target = "parentDirectory", qualifiedByName = "mapIdToEntity")
-    public abstract Project mapToEntity(ProjectFullDto projectFullDto);
+    public abstract Project mapForSaveEntity(ProjectUpdateDto projectUpdateDto);
 
     @Override
     @Mapping(target = "id", ignore = true)
-    @Mapping(source = "taskIds", target = "tasks", qualifiedByName = "mapIdsToEntities")
+    @Mapping(target = "tasks", ignore = true)
     @Mapping(source = "parentDirectoryId", target = "parentDirectory", qualifiedByName = "mapIdToEntity")
-    public abstract Project mapUpdateEntity(@MappingTarget Project project, ProjectFullDto projectFullDto);
+    public abstract Project mapForUpdateEntity(@MappingTarget Project project, ProjectUpdateDto projectUpdateDto);
 
 }

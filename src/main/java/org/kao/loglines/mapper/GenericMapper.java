@@ -5,18 +5,20 @@ import org.mapstruct.MappingTarget;
 import java.util.Collection;
 import java.util.List;
 
-public interface GenericMapper<Entity, DtoUpdate> {
+public interface GenericMapper<Entity, DtoFull, DtoUpdate> {
 
     List<Long> mapEntitiesToIds(Collection<Entity> entities);
 
-    List<Entity> mapIdsToEntities(Collection<Long> ids);
-
     Entity mapIdToEntity(Long id);
 
-    DtoUpdate mapToDto(Entity entity);
+    DtoFull mapEntityToFullDto(Entity entity);
 
-    Entity mapToEntity(DtoUpdate dtoUpdate);
+    DtoUpdate mapEntityToUpdateDto(Entity entity);
 
-    Entity mapUpdateEntity(@MappingTarget Entity entity, DtoUpdate dtoUpdate);
+    Entity mapFullDtoToEntity(DtoFull dtoFull);
+
+    Entity mapForSaveEntity(DtoUpdate dtoUpdate);
+
+    Entity mapForUpdateEntity(@MappingTarget Entity entity, DtoUpdate dtoUpdate);
 
 }

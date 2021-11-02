@@ -9,9 +9,9 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
-public abstract class GenericCRUDController<Entity, DtoUpdate> {
+public abstract class GenericCRUDController<Entity, DtoFull, DtoUpdate> {
 
-    public abstract GenericCRUDService<Entity, DtoUpdate> getService();
+    public abstract GenericCRUDService<Entity, DtoFull, DtoUpdate> getService();
 
     @GetMapping
     public ResponseEntity<List<Entity>> getAllData() {
@@ -19,7 +19,7 @@ public abstract class GenericCRUDController<Entity, DtoUpdate> {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<DtoUpdate> getById(@PathVariable(name = "id") @NotNull Long id) {
+    public ResponseEntity<DtoFull> getById(@PathVariable(name = "id") @NotNull Long id) {
         return ResponseEntity.ok(getService().get(id));
     }
 

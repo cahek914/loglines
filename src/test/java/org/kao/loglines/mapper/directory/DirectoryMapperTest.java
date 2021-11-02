@@ -3,29 +3,28 @@ package org.kao.loglines.mapper.directory;
 import org.junit.jupiter.api.Test;
 import org.kao.loglines.data.TestDataProvider;
 import org.kao.loglines.dto.directory.DirectoryFullDto;
+import org.kao.loglines.dto.directory.DirectoryUpdateDto;
 import org.kao.loglines.entity.directory.Directory;
-import org.kao.loglines.entity.project.Project;
+import org.kao.loglines.mapper.GenericMapper;
+import org.kao.loglines.mapper.GenericMapperImplTest;
+import org.kao.loglines.service.GenericCRUDService;
 import org.kao.loglines.service.directory.DirectoryService;
 import org.kao.loglines.service.project.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import static org.mockito.Mockito.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-class DirectoryMapperTest {
+class DirectoryMapperTest extends GenericMapperImplTest<Directory, DirectoryFullDto, DirectoryUpdateDto> {
 
     @Autowired
     private TestDataProvider dataProvider;
 
     @Autowired
-    private DirectoryMapper mapper;
+    private DirectoryMapper directoryMapper;
 
     @MockBean
     private DirectoryService directoryService;
@@ -33,82 +32,105 @@ class DirectoryMapperTest {
     @MockBean
     private ProjectService projectService;
 
+    @Override
+    protected Directory getEntity() {
+        return dataProvider.directory();
+    }
+
+    @Override
+    protected GenericMapper<Directory, DirectoryFullDto, DirectoryUpdateDto> getMapper() {
+        return directoryMapper;
+    }
+
+    @Override
+    protected GenericCRUDService<Directory, DirectoryFullDto, DirectoryUpdateDto> getMockedService() {
+        return directoryService;
+    }
+
+    @Override
     @Test
-    public void mappedIdsSizeShouldEqualsToEntitiesSize() {
+    public void mapEntityToFullDto() {
 
-        List<Directory> directories = dataProvider.getRandomListOf(dataProvider::directory, 0, 2, 10);
-        List<Long> ids = mapper.mapEntitiesToIds(directories);
+        Directory directory = dataProvider.directoryWithProjectAndParent();
+        DirectoryFullDto directoryFullDto = directoryMapper.mapEntityToFullDto(directory);
 
-        assertThat(directories.size()).isEqualTo(ids.size());
+        assertThat(directory.getId()).isEqualTo(directoryFullDto.getId());
+        assertThat(directory.getProjects().size()).isEqualTo(directoryFullDto.getProjectIds().size());
+        assertThat(directory.getParentDirectory().getId()).isEqualTo(directoryFullDto.getParentDirectoryId());
+        assertThat(directory.getTitle()).isEqualTo(directoryFullDto.getTitle());
+        assertThat(directory.getDescription()).isEqualTo(directoryFullDto.getDescription());
 
     }
 
+    @Override
     @Test
-    public void mappingToUpdateDto() {
+    public void mapFullDtoToEntity() {
 
-        Directory directory = getDirectoryWithProjectAndParent();
-        DirectoryFullDto updateDto = mapper.mapToDto(directory);
+        Directory directory = dataProvider.directoryWithProjectAndParent();
+        DirectoryFullDto directoryFullDto = directoryMapper.mapEntityToFullDto(directory);
 
-        assertThat(directory.getProjects().size()).isEqualTo(updateDto.getProjectIds().size());
-        assertThat(directory.getParentDirectory().getId()).isEqualTo(updateDto.getParentDirectoryId());
-        assertThat(directory.getTitle()).isEqualTo(updateDto.getTitle());
-        assertThat(directory.getDescription()).isEqualTo(updateDto.getDescription());
+        when(directoryService.getEntity(anyLong())).thenReturn(directory.getParentDirectory());
+        when(projectService.getList(anyCollection())).thenReturn(directory.getProjects());
 
-    }
-
-    @Test
-    public void mappingToEntity() {
-
-
-        Directory directory = getDirectoryWithProjectAndParent();
-        assertThat(directory.getProjects()).hasSize(1);
-        Project project = directory.getProjects().get(0);
-
-        when(directoryService.get(anyLong())).thenReturn(directory.getParentDirectory());
-        when(projectService.get(anyLong())).thenReturn(project);
-
-        DirectoryFullDto updateDto = mapper.mapToDto(directory);
-
-        Directory mappedDirectory = mapper.mapToEntity(updateDto);
-        mappedDirectory.setId(directory.getId());
+        Directory mappedDirectory = directoryMapper.mapFullDtoToEntity(directoryFullDto);
 
         assertThat(directory).isEqualTo(mappedDirectory);
 
     }
 
+    @Override
     @Test
-    public void mappingUpdateEntity() {
+    public void mapEntityToUpdateDto() {
 
-        Directory directory = getDirectoryWithProjectAndParent();
-        assertThat(directory.getProjects()).hasSize(1);
-        Project project = directory.getProjects().get(0);
+        Directory directory = dataProvider.directoryWithProjectAndParent();
 
-        when(directoryService.get(anyLong())).thenReturn(directory.getParentDirectory());
-        when(projectService.get(anyLong())).thenReturn(project);
+        DirectoryUpdateDto updateDto = directoryMapper.mapEntityToUpdateDto(directory);
 
-        DirectoryFullDto updateDto = mapper.mapToDto(directory);
+        assertThat(updateDto.getParentDirectoryId()).isEqualTo(directory.getParentDirectory().getId());
+        assertThat(updateDto.getTitle()).isEqualTo(directory.getTitle());
+        assertThat(updateDto.getDescription()).isEqualTo(directory.getDescription());
+
+    }
+
+    @Override
+    @Test
+    public void mapForSaveEntity() {
+
+        DirectoryUpdateDto updateDto = dataProvider.directoryUpdateDto();
+        Directory parentDirectory = dataProvider.directory();
+        updateDto.setParentDirectoryId(parentDirectory.getId());
+
+        when(directoryService.getEntity(anyLong())).thenReturn(parentDirectory);
+
+        Directory mappedDirectory = directoryMapper.mapForSaveEntity(updateDto);
+
+        assertThat(mappedDirectory.getId()).isNull();
+        assertThat(mappedDirectory.getParentDirectory().getId()).isEqualTo(updateDto.getParentDirectoryId());
+        assertThat(mappedDirectory.getTitle()).isEqualTo(updateDto.getTitle());
+        assertThat(mappedDirectory.getDescription()).isEqualTo(updateDto.getDescription());
+
+    }
+
+    @Override
+    @Test
+    public void mapForUpdateEntity() {
+
+        Directory parentDirectory = dataProvider.directory();
+        Directory directory = dataProvider.directory();
+        directory.setParentDirectory(parentDirectory);
+
+        DirectoryUpdateDto updateDto = directoryMapper.mapEntityToUpdateDto(directory);
         updateDto.setTitle("new title");
-        Directory mappedDirectory = mapper.mapUpdateEntity(directory, updateDto);
+
+        when(directoryService.getEntity(anyLong())).thenReturn(parentDirectory);
+
+        Directory mappedDirectory = directoryMapper.mapForUpdateEntity(directory, updateDto);
 
         assertThat(mappedDirectory.getId()).isEqualTo(directory.getId());
-        assertThat(mappedDirectory.getProjects().size()).isEqualTo(directory.getProjects().size());
-        assertThat(mappedDirectory.getParentDirectory()).isEqualTo(directory.getParentDirectory());
-        assertThat(mappedDirectory.getDescription()).isEqualTo(directory.getDescription());
 
+        assertThat(mappedDirectory.getParentDirectory().getId()).isEqualTo(updateDto.getParentDirectoryId());
+        assertThat(mappedDirectory.getDescription()).isEqualTo(updateDto.getDescription());
         assertThat(mappedDirectory.getTitle()).isEqualTo(updateDto.getTitle());
 
     }
-
-
-    private Directory getDirectoryWithProjectAndParent() {
-
-        Directory directory = dataProvider.directory();
-        Project project = dataProvider.project();
-        project.setParentDirectory(directory);
-        directory.setProjects(new ArrayList<>(Collections.singletonList(project)));
-        directory.setParentDirectory(dataProvider.directory());
-
-        return directory;
-    }
-
 }

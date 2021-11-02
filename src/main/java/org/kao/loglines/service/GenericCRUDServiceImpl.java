@@ -6,18 +6,19 @@ import org.kao.loglines.mapper.GenericMapper;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.List;
 
-public abstract class GenericCRUDServiceImpl<Entity extends EntityId, DtoUpdate> implements GenericCRUDService<Entity , DtoUpdate> {
+public abstract class GenericCRUDServiceImpl<Entity extends EntityId, DtoFull, DtoUpdate> implements GenericCRUDService<Entity, DtoFull, DtoUpdate> {
 
     public abstract JpaRepository<Entity, Long> getRepository();
 
-    public abstract GenericMapper<Entity, DtoUpdate> getMapper();
+    public abstract GenericMapper<Entity, DtoFull, DtoUpdate> getMapper();
 
     @Override
     @Transactional(readOnly = true)
-    public DtoUpdate get(Long id) {
-        return getMapper().mapToDto(
+    public DtoFull get(Long id) {
+        return getMapper().mapEntityToFullDto(
                 getRepository().findById(id).orElseThrow(() -> new GenericServiceException.NotFound(id))
         );
     }
@@ -34,16 +35,22 @@ public abstract class GenericCRUDServiceImpl<Entity extends EntityId, DtoUpdate>
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public List<Entity> getList(Collection<Long> ids) {
+        return getRepository().findAllById(ids);
+    }
+
+    @Override
     @Transactional
     public Entity create(DtoUpdate dtoUpdate) {
-        return getRepository().save(getMapper().mapToEntity(dtoUpdate));
+        return getRepository().save(getMapper().mapForSaveEntity(dtoUpdate));
     }
 
     @Override
     @Transactional
     public Entity update(Long id, DtoUpdate dtoUpdate) {
         return getRepository().save(
-                getMapper().mapUpdateEntity(getEntity(id), dtoUpdate));
+                getMapper().mapForUpdateEntity(getEntity(id), dtoUpdate));
     }
 
     @Override

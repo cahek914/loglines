@@ -1,14 +1,17 @@
 package org.kao.loglines.service;
 
+import java.util.Collection;
 import java.util.List;
 
-public interface GenericCRUDService<Entity, DtoUpdate> {
+public interface GenericCRUDService<Entity, DtoFull, DtoUpdate> {
 
-    DtoUpdate get(Long id);
+    DtoFull get(Long id);
 
     Entity getEntity(Long id);
 
     List<Entity> getList();
+
+    List<Entity> getList(Collection<Long> ids);
 
     Entity create(DtoUpdate dtoUpdate);
 

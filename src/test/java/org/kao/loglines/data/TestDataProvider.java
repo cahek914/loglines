@@ -2,6 +2,9 @@ package org.kao.loglines.data;
 
 import org.assertj.core.internal.bytebuddy.utility.RandomString;
 import org.kao.loglines.configuration.SizeType;
+import org.kao.loglines.dto.directory.DirectoryUpdateDto;
+import org.kao.loglines.dto.project.ProjectUpdateDto;
+import org.kao.loglines.dto.task.TaskUpdateDto;
 import org.kao.loglines.entity.TitleDescription;
 import org.kao.loglines.entity.directory.Directory;
 import org.kao.loglines.entity.project.Project;
@@ -10,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
@@ -36,6 +40,26 @@ public class TestDataProvider {
         return setTitleAndDescription(directory, 0);
     }
 
+    public DirectoryUpdateDto directoryUpdateDto() {
+        return setTitleAndDescription(new DirectoryUpdateDto(), 0);
+    }
+
+    public Directory directoryWithProjectAndParent() {
+
+        Directory directory = directory();
+        Project projectOne = project();
+        projectOne.setParentDirectory(directory);
+        Project projectTwo = project();
+        projectTwo.setParentDirectory(directory);
+        List<Project> projects = new ArrayList<>();
+        projects.add(projectOne);
+        projects.add(projectTwo);
+        directory.setProjects(projects);
+        directory.setParentDirectory(directory());
+
+        return directory;
+    }
+
     public Project project(int maxSizeCorrector) {
         Project project = new Project();
         project.setStartDate(LocalDateTime.now());
@@ -51,32 +75,58 @@ public class TestDataProvider {
         return setTitleAndDescription(project, 0);
     }
 
+    public ProjectUpdateDto projectUpdateDto() {
+        ProjectUpdateDto projectUpdateDto = new ProjectUpdateDto();
+        projectUpdateDto.setStartDate(LocalDateTime.now());
+        projectUpdateDto.setEndDate(LocalDateTime.now().plusHours(5));
+        return setTitleAndDescription(projectUpdateDto, 0);
+    }
+
+    public Project projectWithParentDirectoryAndTasks() {
+
+        Project project = project();
+        Directory directory = directory();
+        project.setParentDirectory(directory);
+        directory.setProjects(new ArrayList<>(Collections.singletonList(project)));
+
+        Task taskOne = task();
+        taskOne.setProject(project);
+        Task taskTwo = task();
+        taskTwo.setProject(project);
+        List<Task> tasks = new ArrayList<>();
+        tasks.add(taskOne);
+        tasks.add(taskTwo);
+        project.setTasks(tasks);
+
+        return project;
+    }
+
     public Task task(int maxSizeCorrector) {
         Task task = new Task();
+        task.setCreatedDate(LocalDateTime.now());
+        task.setUpdatedDate(LocalDateTime.now());
         return setTitleAndDescription(task, maxSizeCorrector);
     }
 
-    public Task task(Long id) {
+    public Task task() {
         Task task = new Task();
-        task.setId(id);
+        task.setId(IdGenerator.getId());
         task.setCreatedDate(LocalDateTime.now());
         task.setUpdatedDate(LocalDateTime.now());
         return setTitleAndDescription(task, 0);
     }
 
-//    public Task taskDateWrapper(Task task) {
-//        task.setCreatedDate(LocalDateTime.now());
-//        task.setUpdatedDate(LocalDateTime.now());
-//        return task;
-//    }
+    public TaskUpdateDto taskUpdateDto() {
+        return setTitleAndDescription(new TaskUpdateDto(), 0);
+    }
 
-//    public Task taskFull(int maxSizeCorrector) {
-//        Task task = new Task();
-//        task.setId(1L);
-//        task.setCreatedDate(LocalDateTime.now());
-//        task.setUpdatedDate(LocalDateTime.now());
-//        return setTitleAndDescription(task, maxSizeCorrector);
-//    }
+    public Task taskWithProject() {
+        Project project = project();
+        Task task = task();
+        project.setTasks(Collections.singletonList(task));
+        task.setProject(project);
+        return task;
+    }
 
     private <T extends TitleDescription> T setTitleAndDescription(T entity, int maxSizeCorrector) {
         entity.setTitle(RandomString.make(SizeType.TITLE_MAX_SIZE + maxSizeCorrector));
