@@ -79,17 +79,12 @@ class ProjectMapperTest extends GenericMapperImplTest<Project, ProjectFullDto, P
         ProjectFullDto projectFullDto = projectMapper.mapEntityToFullDto(project);
 
         when(directoryService.getEntity(anyLong())).thenReturn(project.getParentDirectory());
-        when(taskService.getList(anyCollection())).thenReturn(project.getTasks());
+        project.getTasks().forEach(task ->
+                when(taskService.getEntity(task.getId())).thenReturn(task));
 
         Project mappedProject = projectMapper.mapFullDtoToEntity(projectFullDto);
 
-        assertThat(mappedProject.getId()).isEqualTo(projectFullDto.getId());
-        assertThat(mappedProject.getParentDirectory().getId()).isEqualTo(projectFullDto.getParentDirectoryId());
-        assertThat(mappedProject.getTasks().size()).isEqualTo(projectFullDto.getTaskIds().size());
-        assertThat(mappedProject.getStartDate()).isEqualToIgnoringNanos(projectFullDto.getStartDate());
-        assertThat(mappedProject.getEndDate()).isEqualToIgnoringNanos(projectFullDto.getEndDate());
-        assertThat(mappedProject.getTitle()).isEqualTo(projectFullDto.getTitle());
-        assertThat(mappedProject.getDescription()).isEqualTo(projectFullDto.getDescription());
+        assertThat(mappedProject).isEqualTo(project);
 
     }
 

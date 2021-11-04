@@ -56,6 +56,8 @@ class TaskMapperTest extends GenericMapperImplTest<Task, TaskFullDto, TaskUpdate
         TaskFullDto taskFullDto = taskMapper.mapEntityToFullDto(task);
 
         assertThat(taskFullDto.getId()).isEqualTo(task.getId());
+        assertThat(taskFullDto.getCreatedDate()).isEqualToIgnoringNanos(task.getCreatedDate());
+        assertThat(taskFullDto.getUpdatedDate()).isEqualToIgnoringNanos(task.getUpdatedDate());
         assertThat(taskFullDto.getProjectId()).isEqualTo(task.getProject().getId());
         assertThat(taskFullDto.getTitle()).isEqualTo(task.getTitle());
         assertThat(taskFullDto.getDescription()).isEqualTo(task.getDescription());

@@ -14,7 +14,7 @@ public abstract class GenericCRUDController<Entity, DtoFull, DtoUpdate> {
     public abstract GenericCRUDService<Entity, DtoFull, DtoUpdate> getService();
 
     @GetMapping
-    public ResponseEntity<List<Entity>> getAllData() {
+    public ResponseEntity<List<DtoFull>> getAllData() {
         return ResponseEntity.ok(getService().getList());
     }
 
@@ -24,12 +24,12 @@ public abstract class GenericCRUDController<Entity, DtoFull, DtoUpdate> {
     }
 
     @PostMapping
-    public ResponseEntity<Entity> save(@Valid @RequestBody DtoUpdate dtoUpdate) {
+    public ResponseEntity<DtoFull> save(@Valid @RequestBody DtoUpdate dtoUpdate) {
         return ResponseEntity.status(HttpStatus.CREATED).body(getService().create(dtoUpdate));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Entity> update(@PathVariable(name = "id") @NotNull Long id,
+    public ResponseEntity<DtoFull> update(@PathVariable(name = "id") @NotNull Long id,
                                          @Valid @RequestBody DtoUpdate dtoUpdate) {
         return ResponseEntity.ok(getService().update(id, dtoUpdate));
     }

@@ -70,7 +70,8 @@ class DirectoryMapperTest extends GenericMapperImplTest<Directory, DirectoryFull
         DirectoryFullDto directoryFullDto = directoryMapper.mapEntityToFullDto(directory);
 
         when(directoryService.getEntity(anyLong())).thenReturn(directory.getParentDirectory());
-        when(projectService.getList(anyCollection())).thenReturn(directory.getProjects());
+        directory.getProjects().forEach(project ->
+                when(projectService.getEntity(project.getId())).thenReturn(project));
 
         Directory mappedDirectory = directoryMapper.mapFullDtoToEntity(directoryFullDto);
 

@@ -6,11 +6,14 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.kao.loglines.LoglinesApplication;
+import org.kao.loglines.data.DatabaseCleaner;
 import org.kao.loglines.data.TestDataProvider;
 import org.kao.loglines.dto.task.TaskFullDto;
+import org.kao.loglines.dto.task.TaskUpdateDto;
 import org.kao.loglines.entity.task.Task;
 import org.kao.loglines.exception.GenericServiceException;
 import org.kao.loglines.mapper.task.TaskMapper;
+import org.kao.loglines.service.project.ProjectService;
 import org.kao.loglines.service.task.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,8 +24,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -40,10 +41,16 @@ class TaskControllerTest {
     private TestDataProvider dataProvider;
 
     @Autowired
+    private DatabaseCleaner databaseCleaner;
+
+    @Autowired
     private TaskMapper taskMapper;
 
     @MockBean
-    private TaskService service;
+    private TaskService taskService;
+
+    @MockBean
+    private ProjectService projectService;
 
     private ObjectMapper objectMapper;
 
@@ -57,12 +64,7 @@ class TaskControllerTest {
 
     @AfterEach
     void tearDown() {
-        List<Task> taskListDb = service.getList();
-        if (!taskListDb.isEmpty()) {
-            taskListDb.forEach(task -> service.deleteById(task.getId()));
-        }
-        taskListDb = service.getList();
-        assertThat(taskListDb).isEmpty();
+        databaseCleaner.clean();
     }
 
     @Test
@@ -70,7 +72,7 @@ class TaskControllerTest {
 
         Task task = dataProvider.task();
 
-        when(service.get(task.getId())).thenReturn(taskMapper.mapEntityToFullDto(task));
+        when(taskService.get(task.getId())).thenReturn(taskMapper.mapEntityToFullDto(task));
 
         mockMvc.perform(MockMvcRequestBuilders
                         .get(TASK_ID_URL, task.getId()))
@@ -80,7 +82,7 @@ class TaskControllerTest {
     @Test
     void getByNotExistIdReturnBadRequest() throws Exception {
 
-        when(service.get(anyLong())).thenThrow(GenericServiceException.NotFound.class);
+        when(taskService.get(anyLong())).thenThrow(GenericServiceException.NotFound.class);
 
         mockMvc.perform(MockMvcRequestBuilders
                         .get(TASK_ID_URL, anyLong()))
@@ -91,9 +93,11 @@ class TaskControllerTest {
     void postValidData() throws Exception {
 
         Task task = dataProvider.task();
-        String jsonBody = objectMapper.writeValueAsString(taskMapper.mapEntityToFullDto(task));
+        TaskFullDto taskFullDto = taskMapper.mapEntityToFullDto(dataProvider.task());
 
-        when(service.create(any(TaskFullDto.class))).thenReturn(task);
+        String jsonBody = objectMapper.writeValueAsString(taskMapper.mapEntityToUpdateDto(task));
+
+        when(taskService.create(any(TaskUpdateDto.class))).thenReturn(taskFullDto);
 
         String response = mockMvc.perform(MockMvcRequestBuilders
                         .post(TASK_ROOT_URL)
@@ -102,20 +106,20 @@ class TaskControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isCreated())
                 .andReturn().getResponse().getContentAsString();
 
-        Task taskDb = objectMapper.readValue(response, Task.class);
+        TaskFullDto taskFullDtoDb = objectMapper.readValue(response, TaskFullDto.class);
 
-        assertThat(task.getId()).isEqualTo(taskDb.getId());
-        assertThat(task.getTitle()).isEqualTo(taskDb.getTitle());
-        assertThat(task.getDescription()).isEqualTo(taskDb.getDescription());
-        assertThat(taskDb.getCreatedDate()).isNotNull();
-        assertThat(taskDb.getUpdatedDate()).isNotNull();
+        assertThat(taskFullDtoDb.getId()).isEqualTo(taskFullDto.getId());
+        assertThat(taskFullDtoDb.getCreatedDate()).isNotNull();
+        assertThat(taskFullDtoDb.getUpdatedDate()).isNotNull();
+        assertThat(taskFullDtoDb.getTitle()).isEqualTo(taskFullDto.getTitle());
+        assertThat(taskFullDtoDb.getDescription()).isEqualTo(taskFullDto.getDescription());
     }
 
     @Test
     void postInvalidDataReturnBadRequest() throws Exception {
 
         Task task = dataProvider.task(10);
-        String jsonBody = objectMapper.writeValueAsString(taskMapper.mapEntityToFullDto(task));
+        String jsonBody = objectMapper.writeValueAsString(taskMapper.mapEntityToUpdateDto(task));
 
         mockMvc.perform(MockMvcRequestBuilders
                         .post(TASK_ROOT_URL)
@@ -128,9 +132,12 @@ class TaskControllerTest {
     void updateValidData() throws Exception {
 
         Task task = dataProvider.task();
-        String jsonBody = objectMapper.writeValueAsString(taskMapper.mapEntityToFullDto(task));
+        TaskFullDto taskFullDto = taskMapper.mapEntityToFullDto(task);
+        TaskUpdateDto taskUpdateDto = taskMapper.mapEntityToUpdateDto(task);
 
-        when(service.update(anyLong(), any(TaskFullDto.class))).thenReturn(task);
+        String jsonBody = objectMapper.writeValueAsString(taskUpdateDto);
+
+        when(taskService.update(anyLong(), any(TaskUpdateDto.class))).thenReturn(taskFullDto);
 
         String response = mockMvc.perform(MockMvcRequestBuilders
                         .put(TASK_ID_URL, task.getId())
@@ -139,15 +146,18 @@ class TaskControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn().getResponse().getContentAsString();
 
-        Task taskDb = objectMapper.readValue(response, Task.class);
-        assertThat(taskDb).isEqualTo(task);
+        TaskFullDto taskFullDtoDb = objectMapper.readValue(response, TaskFullDto.class);
+        assertThat(taskFullDtoDb).isEqualTo(taskFullDto);
     }
 
     @Test
     void updateInvalidDataReturnBadRequest() throws Exception {
 
-        Task task = dataProvider.task(10);
-        String jsonBody = objectMapper.writeValueAsString(taskMapper.mapEntityToFullDto(task));
+        Task task = dataProvider.task();
+        task = dataProvider.setTitleAndDescription(task, 10);
+        TaskUpdateDto taskUpdateDto = taskMapper.mapEntityToUpdateDto(task);
+
+        String jsonBody = objectMapper.writeValueAsString(taskUpdateDto);
 
         mockMvc.perform(MockMvcRequestBuilders
                         .put(TASK_ID_URL, task.getId())

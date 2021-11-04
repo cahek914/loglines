@@ -1,8 +1,8 @@
 package org.kao.loglines.data;
 
-import org.kao.loglines.mapper.directory.DirectoryMapper;
-import org.kao.loglines.mapper.project.ProjectMapper;
-import org.kao.loglines.mapper.task.TaskMapper;
+import org.kao.loglines.dto.directory.DirectoryFullDto;
+import org.kao.loglines.dto.project.ProjectFullDto;
+import org.kao.loglines.dto.task.TaskFullDto;
 import org.kao.loglines.service.directory.DirectoryService;
 import org.kao.loglines.service.project.ProjectService;
 import org.kao.loglines.service.task.TaskService;
@@ -18,31 +18,29 @@ public class DatabaseCleaner {
     private DirectoryService directoryService;
 
     @Autowired
-    private DirectoryMapper directoryMapper;
-
-    @Autowired
     private ProjectService projectService;
-
-    @Autowired
-    private ProjectMapper projectMapper;
 
     @Autowired
     private TaskService taskService;
 
-    @Autowired
-    private TaskMapper taskMapper;
-
     public void clean() {
 
-        List<Long> directoryIds = directoryMapper.mapEntitiesToIds(directoryService.getList());
-        directoryIds.forEach(id -> directoryService.deleteById(id));
+        cleanDirectories();
 
-        List<Long> projectIds = projectMapper.mapEntitiesToIds(projectService.getList());
-        projectIds.forEach(id -> projectService.deleteById(id));
+        List<ProjectFullDto> projects = projectService.getList();
+        projects.forEach(project -> projectService.deleteById(project.getId()));
 
-        List<Long> taskIds = taskMapper.mapEntitiesToIds(taskService.getList());
-        taskIds.forEach(id -> taskService.deleteById(id));
+        List<TaskFullDto> tasks = taskService.getList();
+        tasks.forEach(task -> taskService.deleteById(task.getId()));
 
+    }
+
+    private void cleanDirectories() {
+        List<DirectoryFullDto> directories = directoryService.getList();
+        if (directories.listIterator().hasNext()) {
+            directoryService.deleteById(directories.listIterator().next().getId());
+            cleanDirectories();
+        }
     }
 
 }

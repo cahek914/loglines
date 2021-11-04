@@ -128,7 +128,7 @@ public class TestDataProvider {
         return task;
     }
 
-    private <T extends TitleDescription> T setTitleAndDescription(T entity, int maxSizeCorrector) {
+    public <T extends TitleDescription> T setTitleAndDescription(T entity, int maxSizeCorrector) {
         entity.setTitle(RandomString.make(SizeType.TITLE_MAX_SIZE + maxSizeCorrector));
         entity.setDescription(RandomString.make(SizeType.DESCRIPTION_MAX_SIZE + maxSizeCorrector));
         return entity;

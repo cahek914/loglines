@@ -8,8 +8,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
-public abstract class GenericCRUDServiceImpl<Entity extends EntityId, DtoFull, DtoUpdate> implements GenericCRUDService<Entity, DtoFull, DtoUpdate> {
+public abstract class GenericCRUDServiceImpl<Entity extends EntityId, DtoFull, DtoUpdate>
+        implements GenericCRUDService<Entity, DtoFull, DtoUpdate> {
 
     public abstract JpaRepository<Entity, Long> getRepository();
 
@@ -24,33 +26,41 @@ public abstract class GenericCRUDServiceImpl<Entity extends EntityId, DtoFull, D
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Entity getEntity(Long id) {
         return getRepository().findById(id).orElseThrow(() -> new GenericServiceException.NotFound(id));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<Entity> getList() {
-        return getRepository().findAll();
+    public List<DtoFull> getList() {
+        return getRepository().findAll().stream()
+                .map(getMapper()::mapEntityToFullDto)
+                .collect(Collectors.toList());
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<Entity> getList(Collection<Long> ids) {
-        return getRepository().findAllById(ids);
+    public List<DtoFull> getList(Collection<Long> ids) {
+        return getRepository().findAllById(ids).stream()
+                .map(getMapper()::mapEntityToFullDto)
+                .collect(Collectors.toList());
     }
 
     @Override
     @Transactional
-    public Entity create(DtoUpdate dtoUpdate) {
-        return getRepository().save(getMapper().mapForSaveEntity(dtoUpdate));
+    public DtoFull create(DtoUpdate dtoUpdate) {
+        return getMapper().mapEntityToFullDto(
+                getRepository().save(
+                        getMapper().mapForSaveEntity(dtoUpdate)));
     }
 
     @Override
     @Transactional
-    public Entity update(Long id, DtoUpdate dtoUpdate) {
-        return getRepository().save(
-                getMapper().mapForUpdateEntity(getEntity(id), dtoUpdate));
+    public DtoFull update(Long id, DtoUpdate dtoUpdate) {
+        return getMapper().mapEntityToFullDto(
+                getRepository().save(
+                        getMapper().mapForUpdateEntity(getEntity(id), dtoUpdate)));
     }
 
     @Override
