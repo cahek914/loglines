@@ -1,8 +1,6 @@
 package org.kao.loglines.service.task;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.kao.loglines.data.DatabaseCleaner;
 import org.kao.loglines.data.TestDataProvider;
 import org.kao.loglines.dto.project.ProjectFullDto;
 import org.kao.loglines.dto.task.TaskFullDto;
@@ -37,14 +35,6 @@ class TaskServiceTest extends GenericCRUDServiceTest<Task, TaskFullDto, TaskUpda
 
     @Autowired
     private ProjectMapper projectMapper;
-
-    @Autowired
-    private DatabaseCleaner databaseCleaner;
-
-    @AfterEach
-    void tearDown() {
-        databaseCleaner.clean();
-    }
 
     @Override
     protected Task getEntity() {

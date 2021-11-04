@@ -1,6 +1,8 @@
 package org.kao.loglines.service;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.kao.loglines.data.DatabaseCleaner;
 import org.kao.loglines.data.TestDataProvider;
 import org.kao.loglines.entity.EntityId;
 import org.kao.loglines.entity.TitleDescription;
@@ -33,6 +35,14 @@ public abstract class GenericCRUDServiceTest<
     protected abstract GenericMapper<Entity, DtoFull, DtoUpdate> getMapper();
 
     protected abstract GenericCRUDService<Entity, DtoFull, DtoUpdate> getService();
+
+    @Autowired
+    private DatabaseCleaner databaseCleaner;
+
+    @AfterEach
+    public void tearDown() {
+        databaseCleaner.clean();
+    }
 
     @Test
     public void createdEntityListSizeShouldEqualToRetrieved() {

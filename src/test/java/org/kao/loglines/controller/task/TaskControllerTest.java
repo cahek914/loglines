@@ -13,7 +13,6 @@ import org.kao.loglines.dto.task.TaskUpdateDto;
 import org.kao.loglines.entity.task.Task;
 import org.kao.loglines.exception.GenericServiceException;
 import org.kao.loglines.mapper.task.TaskMapper;
-import org.kao.loglines.service.project.ProjectService;
 import org.kao.loglines.service.task.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -48,9 +47,6 @@ class TaskControllerTest {
 
     @MockBean
     private TaskService taskService;
-
-    @MockBean
-    private ProjectService projectService;
 
     private ObjectMapper objectMapper;
 
@@ -92,8 +88,8 @@ class TaskControllerTest {
     @Test
     void postValidData() throws Exception {
 
-        Task task = dataProvider.task();
-        TaskFullDto taskFullDto = taskMapper.mapEntityToFullDto(dataProvider.task());
+        Task task = dataProvider.taskDateWrapper(dataProvider.task());
+        TaskFullDto taskFullDto = taskMapper.mapEntityToFullDto(task);
 
         String jsonBody = objectMapper.writeValueAsString(taskMapper.mapEntityToUpdateDto(task));
 

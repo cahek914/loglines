@@ -52,7 +52,7 @@ class TaskMapperTest extends GenericMapperImplTest<Task, TaskFullDto, TaskUpdate
     @Test
     public void mapEntityToFullDto() {
 
-        Task task = dataProvider.taskWithProject();
+        Task task = dataProvider.taskDateWrapper(dataProvider.taskWithProject());
         TaskFullDto taskFullDto = taskMapper.mapEntityToFullDto(task);
 
         assertThat(taskFullDto.getId()).isEqualTo(task.getId());

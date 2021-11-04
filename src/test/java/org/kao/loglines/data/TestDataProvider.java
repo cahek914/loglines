@@ -102,17 +102,12 @@ public class TestDataProvider {
     }
 
     public Task task(int maxSizeCorrector) {
-        Task task = new Task();
-        task.setCreatedDate(LocalDateTime.now());
-        task.setUpdatedDate(LocalDateTime.now());
-        return setTitleAndDescription(task, maxSizeCorrector);
+        return setTitleAndDescription(new Task(), maxSizeCorrector);
     }
 
     public Task task() {
         Task task = new Task();
         task.setId(IdGenerator.getId());
-        task.setCreatedDate(LocalDateTime.now());
-        task.setUpdatedDate(LocalDateTime.now());
         return setTitleAndDescription(task, 0);
     }
 
@@ -125,6 +120,12 @@ public class TestDataProvider {
         Task task = task();
         project.setTasks(Collections.singletonList(task));
         task.setProject(project);
+        return task;
+    }
+
+    public Task taskDateWrapper(Task task) {
+        task.setCreatedDate(LocalDateTime.now());
+        task.setUpdatedDate(LocalDateTime.now());
         return task;
     }
 

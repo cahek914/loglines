@@ -1,8 +1,5 @@
 package org.kao.loglines.service.directory;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.kao.loglines.data.DatabaseCleaner;
 import org.kao.loglines.data.TestDataProvider;
 import org.kao.loglines.dto.directory.DirectoryFullDto;
 import org.kao.loglines.dto.directory.DirectoryUpdateDto;
@@ -25,18 +22,6 @@ class DirectoryServiceTest extends GenericCRUDServiceTest<Directory, DirectoryFu
 
     @Autowired
     private DirectoryMapper directoryMapper;
-
-    @Autowired
-    private DatabaseCleaner databaseCleaner;
-
-    @BeforeEach
-    void setUp() {
-    }
-
-    @AfterEach
-    void tearDown() {
-        databaseCleaner.clean();
-    }
 
     @Override
     protected Directory getEntity() {

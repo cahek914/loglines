@@ -1,7 +1,5 @@
 package org.kao.loglines.service.project;
 
-import org.junit.jupiter.api.AfterEach;
-import org.kao.loglines.data.DatabaseCleaner;
 import org.kao.loglines.data.TestDataProvider;
 import org.kao.loglines.dto.project.ProjectFullDto;
 import org.kao.loglines.dto.project.ProjectUpdateDto;
@@ -24,14 +22,6 @@ public class ProjectServiceTest extends GenericCRUDServiceTest<Project, ProjectF
 
     @Autowired
     private ProjectMapper projectMapper;
-
-    @Autowired
-    private DatabaseCleaner databaseCleaner;
-
-    @AfterEach
-    void tearDown() {
-        databaseCleaner.clean();
-    }
 
     @Override
     protected Project getEntity() {
