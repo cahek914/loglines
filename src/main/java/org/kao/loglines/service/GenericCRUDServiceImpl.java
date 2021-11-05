@@ -60,6 +60,7 @@ public abstract class GenericCRUDServiceImpl<Entity extends EntityId, DtoFull, D
     public DtoFull update(Long id, DtoUpdate dtoUpdate) {
         return getMapper().mapEntityToFullDto(
                 // flushes the data immediately during the execution
+                // to get actual update data stamp
                 getRepository().saveAndFlush(
                         getMapper().mapForUpdateEntity(getEntity(id), dtoUpdate)));
     }
