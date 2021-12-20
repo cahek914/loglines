@@ -1,4 +1,4 @@
-package org.kao.loglines.dto.project;
+package org.kao.loglines.model.directory;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -10,10 +10,10 @@ import java.util.List;
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
-public class ProjectFullDto extends ProjectUpdateDto implements EntityId {
+public class DirectoryFullDto extends DirectoryUpdateDto implements EntityId {
 
     private Long id;
 
-    private List<Long> taskIds;
+    private List<Long> projectIds;
 
 }

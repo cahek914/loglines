@@ -2,8 +2,8 @@ package org.kao.loglines.controller.directory;
 
 import lombok.RequiredArgsConstructor;
 import org.kao.loglines.controller.GenericCRUDController;
-import org.kao.loglines.dto.directory.DirectoryFullDto;
-import org.kao.loglines.dto.directory.DirectoryUpdateDto;
+import org.kao.loglines.model.directory.DirectoryFullDto;
+import org.kao.loglines.model.directory.DirectoryUpdateDto;
 import org.kao.loglines.entity.directory.Directory;
 import org.kao.loglines.service.GenericCRUDService;
 import org.kao.loglines.service.directory.DirectoryService;

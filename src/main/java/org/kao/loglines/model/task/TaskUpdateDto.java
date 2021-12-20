@@ -1,4 +1,4 @@
-package org.kao.loglines.dto.task;
+package org.kao.loglines.model.task;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

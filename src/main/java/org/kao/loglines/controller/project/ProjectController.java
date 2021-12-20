@@ -2,8 +2,8 @@ package org.kao.loglines.controller.project;
 
 import lombok.RequiredArgsConstructor;
 import org.kao.loglines.controller.GenericCRUDController;
-import org.kao.loglines.dto.project.ProjectFullDto;
-import org.kao.loglines.dto.project.ProjectUpdateDto;
+import org.kao.loglines.model.project.ProjectFullDto;
+import org.kao.loglines.model.project.ProjectUpdateDto;
 import org.kao.loglines.entity.project.Project;
 import org.kao.loglines.service.GenericCRUDService;
 import org.kao.loglines.service.project.ProjectService;

@@ -1,8 +1,8 @@
 package org.kao.loglines.service.task;
 
 import lombok.RequiredArgsConstructor;
-import org.kao.loglines.dto.task.TaskFullDto;
-import org.kao.loglines.dto.task.TaskUpdateDto;
+import org.kao.loglines.model.task.TaskFullDto;
+import org.kao.loglines.model.task.TaskUpdateDto;
 import org.kao.loglines.entity.task.Task;
 import org.kao.loglines.mapper.GenericMapper;
 import org.kao.loglines.mapper.task.TaskMapper;

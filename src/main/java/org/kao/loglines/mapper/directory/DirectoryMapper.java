@@ -1,7 +1,7 @@
 package org.kao.loglines.mapper.directory;
 
-import org.kao.loglines.dto.directory.DirectoryFullDto;
-import org.kao.loglines.dto.directory.DirectoryUpdateDto;
+import org.kao.loglines.model.directory.DirectoryFullDto;
+import org.kao.loglines.model.directory.DirectoryUpdateDto;
 import org.kao.loglines.entity.directory.Directory;
 import org.kao.loglines.mapper.GenericMapperImpl;
 import org.kao.loglines.mapper.project.ProjectMapper;

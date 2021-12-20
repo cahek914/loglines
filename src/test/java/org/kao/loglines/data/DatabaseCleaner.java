@@ -1,8 +1,8 @@
 package org.kao.loglines.data;
 
-import org.kao.loglines.dto.directory.DirectoryFullDto;
-import org.kao.loglines.dto.project.ProjectFullDto;
-import org.kao.loglines.dto.task.TaskFullDto;
+import org.kao.loglines.model.directory.DirectoryFullDto;
+import org.kao.loglines.model.project.ProjectFullDto;
+import org.kao.loglines.model.task.TaskFullDto;
 import org.kao.loglines.service.directory.DirectoryService;
 import org.kao.loglines.service.project.ProjectService;
 import org.kao.loglines.service.task.TaskService;

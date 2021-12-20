@@ -2,8 +2,8 @@ package org.kao.loglines.mapper.directory;
 
 import org.junit.jupiter.api.Test;
 import org.kao.loglines.data.TestDataProvider;
-import org.kao.loglines.dto.directory.DirectoryFullDto;
-import org.kao.loglines.dto.directory.DirectoryUpdateDto;
+import org.kao.loglines.model.directory.DirectoryFullDto;
+import org.kao.loglines.model.directory.DirectoryUpdateDto;
 import org.kao.loglines.entity.directory.Directory;
 import org.kao.loglines.mapper.GenericMapper;
 import org.kao.loglines.mapper.GenericMapperImplTest;

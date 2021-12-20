@@ -2,9 +2,9 @@ package org.kao.loglines.service.task;
 
 import org.junit.jupiter.api.Test;
 import org.kao.loglines.data.TestDataProvider;
-import org.kao.loglines.dto.project.ProjectFullDto;
-import org.kao.loglines.dto.task.TaskFullDto;
-import org.kao.loglines.dto.task.TaskUpdateDto;
+import org.kao.loglines.model.project.ProjectFullDto;
+import org.kao.loglines.model.task.TaskFullDto;
+import org.kao.loglines.model.task.TaskUpdateDto;
 import org.kao.loglines.entity.project.Project;
 import org.kao.loglines.entity.task.Task;
 import org.kao.loglines.mapper.GenericMapper;

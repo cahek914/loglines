@@ -2,9 +2,9 @@ package org.kao.loglines.data;
 
 import org.assertj.core.internal.bytebuddy.utility.RandomString;
 import org.kao.loglines.configuration.SizeType;
-import org.kao.loglines.dto.directory.DirectoryUpdateDto;
-import org.kao.loglines.dto.project.ProjectUpdateDto;
-import org.kao.loglines.dto.task.TaskUpdateDto;
+import org.kao.loglines.model.directory.DirectoryUpdateDto;
+import org.kao.loglines.model.project.ProjectUpdateDto;
+import org.kao.loglines.model.task.TaskUpdateDto;
 import org.kao.loglines.entity.TitleDescription;
 import org.kao.loglines.entity.directory.Directory;
 import org.kao.loglines.entity.project.Project;

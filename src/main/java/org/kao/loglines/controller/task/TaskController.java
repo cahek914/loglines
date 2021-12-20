@@ -2,8 +2,8 @@ package org.kao.loglines.controller.task;
 
 import lombok.RequiredArgsConstructor;
 import org.kao.loglines.controller.GenericCRUDController;
-import org.kao.loglines.dto.task.TaskFullDto;
-import org.kao.loglines.dto.task.TaskUpdateDto;
+import org.kao.loglines.model.task.TaskFullDto;
+import org.kao.loglines.model.task.TaskUpdateDto;
 import org.kao.loglines.entity.task.Task;
 import org.kao.loglines.service.GenericCRUDService;
 import org.kao.loglines.service.task.TaskService;

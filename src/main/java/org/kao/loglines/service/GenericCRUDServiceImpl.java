@@ -1,6 +1,5 @@
 package org.kao.loglines.service;
 
-import org.kao.loglines.entity.EntityId;
 import org.kao.loglines.exception.GenericServiceException;
 import org.kao.loglines.mapper.GenericMapper;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,7 +9,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public abstract class GenericCRUDServiceImpl<Entity extends EntityId, DtoFull, DtoUpdate>
+public abstract class GenericCRUDServiceImpl<Entity, DtoFull, DtoUpdate>
         implements GenericCRUDService<Entity, DtoFull, DtoUpdate> {
 
     public abstract JpaRepository<Entity, Long> getRepository();
